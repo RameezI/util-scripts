@@ -1,0 +1,60 @@
+matrix_local = matrix_parent_inverse @ matrix_basis
+
+
+
+
+A---->B----->C  (Let A be the child of B and B be the child of C)
+Calculate Global cooridnates for new C and A:
+
+--- Calculate local matrices:
+	1) A.matrix_local = A.matrix_parent_inverse  @ A.matrix_basis 
+	2) B.matrix_local = B.matrix_parent_inverse  @ B.matrix_basis 
+	3) C.matrix_local = C.matrix_parent_inverse  @ C.matrix_basis
+	
+	
+--- Calculate global matrices
+	1)A in global coordinates = I @ A.matrix_local @ B.matrix_local @ C.matrix_local
+	2)B in global coordinates = I @ B.matrix_local @ C.matrix_local
+	3 C in global coordinates = I @ C.matrix_local
+	
+
+	
+(The transforms calculate a new matrix_basis for the object, given the relations above)
+
+--- Apply a pq transform to A in its own coordinates system:
+	1. 	  transform = translation @ rotation
+		  A.matrix_local = A.matrix_local @ transform
+		  (matrix_basis is updated based on the matrix_local)
+		  
+	2. 	  transform = translation @ rotation
+		  A.matrix_world = A.matrix_world @ transform
+		  (matrix_basis is updated based on the matrix_world)
+	
+	Note: The transformation 1 and 2 are equivalent == resuslt in the same matrix_basis 
+	
+	
+--- Apply a pq transform to A in its parent coordinates system:
+		  transform = translation @ rotation
+		  A.matrix_local = transform @ A.matrix_local
+	Note: Rotation is around the origin of the parent!
+	
+		  
+--- Apply transform to B in the world coordinate system:		  
+		  transform = translation @ rotation
+		  B.matrix_world = transform @ matrix matrix.world
+
+==========================================================================================		  
+def adopt(child, parent):
+    child.parent = parent
+    child.matrix_parent_inverse = parent.matrix_local.inverted()
+    bpy.context.view_layer.update()
+
+    
+def disown(child):
+    bpy.ops.object.select_all(action='DESELECT')
+    child.select_set(True)
+    bpy.ops.object.parent_clear(type='CLEAR')
+    bpy.ops.object.select_all(action='DESELECT')
+    bpy.context.view_layer.update()
+
+============================================================================================

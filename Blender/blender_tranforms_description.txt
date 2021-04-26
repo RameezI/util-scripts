@@ -1,0 +1,19 @@
+matrix_local = matrix_parent_inverse @ matrix_basis
+
+A---->B----->C  (Let C be the child of B and B be the child of A)
+
+
+Assuming A and C are displaced
+Calculate Global cooridnates for new C and A:
+
+	Calculate local matrices:
+	1) C.matrix_parent_inverse  @ C.matrix_basis  == C.matrix_local
+	2) B.matrix_parent_inverse  @ B.matrix_basis  == B.matrix_local
+	3) A.matrix_parent_inverse  @ A.matrix_local  == A.matrix_local
+	
+	Calculate global matrices
+	1)C in global coordinates = I @ A.matrix_local @ B.matrix_local @ C.matrix_local
+
+	
+	
+	
